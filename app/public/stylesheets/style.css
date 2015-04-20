@@ -1,0 +1,8 @@
+body {
+  background: #efefef;
+  font: 14px "Courier New" monospace;
+  max-width: 650px;
+  padding: 20px;
+  margin: auto;
+  border-bottom: 1px solid black;
+}

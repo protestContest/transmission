@@ -1,0 +1,3 @@
+*.sublime-workspace
+.vagrant
+node_modules
