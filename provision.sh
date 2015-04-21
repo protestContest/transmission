@@ -10,3 +10,5 @@ su vagrant -c "curl -L http://install.ohmyz.sh | sh"
 chsh vagrant -s /usr/bin/zsh
 sed -i 's/robbyrussell/terminalparty/g' /home/vagrant/.zshrc
 echo "export DEBUG=app" >> /home/vagrant/.zshrc
+
+chown -R vagrant:vagrant /home/vagrant/.npm
