@@ -3,10 +3,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var MessageList = React.createClass({
     getInitialState: function() {
-      return {messages: ["Incoming transmission... please wait."]};
+      return {messages: [""]};
     },
     addMessage: function(msg) {
-      this.state.messages.push(msg);
+      this.setState(function(state) {
+        return {messages: state.messages.concat(msg)};
+      });
     },
     render: function() {
       var createItem = function(text, index) {
@@ -46,11 +48,29 @@ document.addEventListener("DOMContentLoaded", function() {
       this.setState({request: name});
     },
     render: function() {
+      var styles = {
+        flexContainer: {
+          display: "flex"
+        },
+        form: {
+          display: "inline",
+          flexGrow: 1
+        },
+        input: {
+          border: "none",
+          width: "100%",
+          background: "none",
+          outline: "none",
+          font: "14px monospace"
+        }
+      };
+
       return (
-        <div>
-          <span class="prompt">&gt;&nbsp;</span>
-          <form onSubmit={this.onSubmit}>
+        <div style={styles.flexContainer}>
+          <span>&gt;&nbsp;</span>
+          <form style={styles.form} onSubmit={this.onSubmit}>
             <input ref="input" 
+                style={styles.input}
                 disabled={this.state.disabled} 
                 onChange={this.onChange}
                 value={this.state.text} />
@@ -60,23 +80,55 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  var messageList = React.render(<MessageList />, document.getElementById("messages"));
-  var inputBox = React.render(<InputBox />, document.getElementById("inputBox"))
+  var Terminal = React.createClass({
+    componentDidUpdate: function() {
+      var node = this.getDOMNode();
+      node.scrollTop = node.scrollHeight;
+    },
+    addMessage: function(message) {
+      this.refs.ml.addMessage(message.text);
+
+      if (message.request) {
+        this.refs.ib.request(message.request);
+
+        if (message.request === "_") {
+          this.refs.ib.disableInput();
+        } else {
+          this.refs.ib.enableInput();
+        }
+      }
+
+      this.forceUpdate();
+    },
+    render: function() {
+      var styles = {
+        container: {
+          height: "100vh",
+          overflow: "scroll"
+        }
+      };
+
+      return (
+        <div style={styles.container}>
+          <MessageList ref="ml" />
+          <InputBox ref="ib" />
+        </div>
+      );
+    }
+  });
+
+  var terminal = React.render(<Terminal />, document.getElementById("terminal"))
 
   socket.on('message', function(message) {
-    messageList.setState(function(state) {
-      return {messages: state.messages.concat(message.text)};
-    });
+    terminal.addMessage(message);
+  });
 
-    if (message.request) {
-      inputBox.request(message.request);
+  socket.on('connect', function() {
+    terminal.addMessage({text: "Connection established."});
+  });
 
-      if (message.request === "_") {
-        inputBox.disableInput();
-      } else {
-        inputBox.enableInput();
-      }
-    }
+  socket.on('disconnect', function() {
+    terminal.addMessage({text: "Connection terminated."});
   });
 
 });

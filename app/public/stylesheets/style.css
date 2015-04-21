@@ -1,24 +1,7 @@
 body {
   background: #efefef;
-  font: 14px "Courier New" monospace;
+  font: 14px monospace;
   max-width: 650px;
-  padding: 20px;
+  padding: 0px 20px;
   margin: auto;
-}
-
-#inputBox div {
-  display: flex;
-}
-
-#inputBox form {
-  display: inline;
-  flex-grow: 1;
-}
-
-#inputBox input {
-  border: none;
-  width: 100%;
-  background: none;
-  outline: none;
-  font: 14px "Courier New" monospace;
 }
