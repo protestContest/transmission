@@ -4,5 +4,21 @@ body {
   max-width: 650px;
   padding: 20px;
   margin: auto;
-  border-bottom: 1px solid black;
+}
+
+#inputBox div {
+  display: flex;
+}
+
+#inputBox form {
+  display: inline;
+  flex-grow: 1;
+}
+
+#inputBox input {
+  border: none;
+  width: 100%;
+  background: none;
+  outline: none;
+  font: 14px "Courier New" monospace;
 }
