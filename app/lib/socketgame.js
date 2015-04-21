@@ -4,7 +4,7 @@ module.exports = function(io) {
 
     setTimeout(function() {
       console.log("sending message");
-      socket.emit('newmessage', 'Hello.');
+      socket.emit('newmessage', '<b>Hello.</b>');
     }, 2000);
 
   });

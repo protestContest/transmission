@@ -1,10 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-  var Message = React.createClass({
-    render: function() {
-      return <p>{this.props.msg}</p>;
-    }
-  });
-
   var MessageList = React.createClass({
     getInitialState: function() {
       return {messages: ["Incoming transmission... please wait."]};
@@ -14,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     render: function() {
       var createItem = function(text, index) {
-        return <p key={index + text}>{text}</p>;
+        return <p key={index + text} dangerouslySetInnerHTML={{__html: text}}></p>;
       };
 
       return <div>{this.state.messages.map(createItem)}</div>;
