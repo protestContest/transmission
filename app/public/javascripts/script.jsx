@@ -1,14 +1,11 @@
-
 document.addEventListener("DOMContentLoaded", function() {
-  console.log("Document ready.");
-
-  var Message = React.createClass({displayName: "Message",
+  var Message = React.createClass({
     render: function() {
-      return React.createElement("p", null, this.props.msg);
+      return <p>{this.props.msg}</p>;
     }
   });
 
-  var MessageList = React.createClass({displayName: "MessageList",
+  var MessageList = React.createClass({
     getInitialState: function() {
       return {messages: ["Incoming transmission... please wait."]};
     },
@@ -17,24 +14,21 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     render: function() {
       var createItem = function(text, index) {
-        return React.createElement("p", {key: index + text}, text);
+        return <p key={index + text}>{text}</p>;
       };
 
-      return React.createElement("div", null, this.state.messages.map(createItem));
+      return <div>{this.state.messages.map(createItem)}</div>;
     }
   });
 
 
   var socket = io.connect("http://localhost:3000");
-  var messageList = React.render(React.createElement(MessageList, null), document.getElementById("messages"));
+  var messageList = React.render(<MessageList />, document.getElementById("messages"));
 
   socket.on('newmessage', function(message) {
-    console.log("Got message: " + message);
     messageList.setState(function(state) {
-      console.log(state);
       return {messages: state.messages.concat(message)};
     });
-    // messageList.forceUpdate();
   });
 
 });
