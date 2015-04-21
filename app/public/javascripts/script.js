@@ -1,6 +1,6 @@
 
 document.addEventListener("DOMContentLoaded", function() {
-  var socket = io.connect("http://localhost:3000");
+  var socket = io.connect();
 
   var MessageList = React.createClass({displayName: "MessageList",
     getInitialState: function() {
