@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var styles = {
         container: {
           height: "100vh",
-          overflow: "scroll"
+          overflowY: "auto"
         }
       };
 
