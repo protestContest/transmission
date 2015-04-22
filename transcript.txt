@@ -1,0 +1,34 @@
+Incoming transmission... please wait.
+---
+Please identify yourself:
+---
+Hello again Zack. You have (1) current project(s).
+
+0. Begin new project
+1. 2015-04-22 1424 UTC
+
+Would you like to resume your work?
+---
+You have (1) new message.
+
+New message:
+
+| 2015-04-21 0800 UTC
+| 
+| General Memo to Faculty:
+|
+| As you may have heard, there was a minor accident last week in lab A431. We
+| have determined that the incident was the result of failure to observe
+| standard safety practices, which are mandatory for all faculty. Failure to
+| observe standard safety practices will result in disciplinary action.
+|
+| We encourage all faculty to take a moment to review standard safety practices
+| for their lab. If you do not have a copy of your lab's standard safety
+| practices, you can request one from your lab supervisor.
+|
+| A safety crew will investigate lab A431 this week, but we do not believe the
+| incident will impact any other labs. Please disregard rumors to the contrary.
+|
+| Richard Quest
+| Facility Supervisor
+---
