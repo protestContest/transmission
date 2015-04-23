@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     render: function() {
       var createItem = function(text, index) {
-        return <p key={index + text} dangerouslySetInnerHTML={{__html: text}}></p>;
+        return <div key={index + text} dangerouslySetInnerHTML={{__html: text}}></div>;
       };
 
       return <div>{this.state.messages.map(createItem)}</div>;
@@ -124,11 +124,11 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   socket.on('connect', function() {
-    terminal.addMessage({text: "Connection established."});
+    terminal.addMessage({text: "<p>Connection established.</p>"});
   });
 
   socket.on('disconnect', function() {
-    terminal.addMessage({text: "Connection terminated."});
+    terminal.addMessage({text: "<p>Connection terminated.</p>"});
   });
 
 });
