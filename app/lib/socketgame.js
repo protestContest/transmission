@@ -78,8 +78,8 @@ function respond(socket, rclient, data) {
 function checkNewPlayer(rclient, name, next) {
   rclient.exists(name, function(err, exists) {
     if (!exists) {
-      rclient.hset(name, "level", 0, function(err) {
-        next(0);
+      resetLevel(rclient, name, function() {
+        next('0');
       });
     } else {
       rclient.hget(name, "level", function(err, level) {
@@ -96,7 +96,7 @@ function levelUp(rclient, name, next) {
 }
 
 function resetLevel(rclient, name, next) {
-  rclient.hset(name, "level", 0, function(err) {
+  rclient.hset(name, "level", '0', function(err) {
     if (next) { next(); }
   });
 }
