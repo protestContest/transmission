@@ -27,10 +27,6 @@ function respond(socket, rclient, data) {
     case "name":
       data.name = data.text;
       checkNewPlayer(rclient, data.name, function(level) {
-        console.log({
-          name: data.name,
-          level: level
-        });
         goToLevel(socket, rclient, level, data);
       });
     break;
@@ -60,7 +56,7 @@ function respond(socket, rclient, data) {
 
         case "messages":
           socket.send({
-            text: "<p>You have (2) messages.</p> <ol> <li>2015-04-22 1806 UTC | Hello. I don't know who you are, but thankfully you've</li> <li>2015-04-21 0800 UTC | General Memo to Faculty:</li></ol>",
+            text: jade.renderFile(__dirname + '/text/messages.jade'),
             request: "command"
           });
         break;
@@ -121,7 +117,7 @@ function goToLevel(socket, rclient, level, data) {
 
     case '1':
       socket.send({
-        text: jade.renderFile(__dirname + '/text/info.jade', data),
+        text: jade.renderFile(__dirname + '/text/messages.jade', data),
         request: "command"
       });
     break;
