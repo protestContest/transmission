@@ -25,14 +25,15 @@ module.exports = function(io) {
 function respond(socket, data) {
   switch(data.requested) {
     case "name":
-        text: jade.renderFile(__dirname + '/text/greeting.jade'),
+      socket.send({
+        text: jade.renderFile(__dirname + '/text/greeting.jade', data),
         request: "_"
       });
 
       setTimeout(function() {
         socket.send({
-          text: jade.renderFile(__dirname + '/text/mongoose.jade'),
-          request: "_"
+          text: jade.renderFile(__dirname + '/text/mongoose.jade', data),
+          request: "command"
         });
       }, 4000);
     break;
