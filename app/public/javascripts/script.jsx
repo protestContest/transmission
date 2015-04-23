@@ -31,6 +31,13 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     onSubmit: function(e) {
       e.preventDefault();
+
+      if (this.state.text === "exit") {
+        socket.disconnect();
+        this.setState({text: ""});
+        return;
+      }
+
       socket.send({
         text: this.state.text,
         requested: this.state.request
