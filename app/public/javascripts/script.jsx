@@ -69,9 +69,9 @@ document.addEventListener("DOMContentLoaded", function() {
         <div style={styles.flexContainer}>
           <span>&gt;&nbsp;</span>
           <form style={styles.form} onSubmit={this.onSubmit}>
-            <input ref="input" 
+            <input ref="input"
                 style={styles.input}
-                disabled={this.state.disabled} 
+                disabled={this.state.disabled}
                 onChange={this.onChange}
                 value={this.state.text} />
           </form>
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var styles = {
         container: {
           height: "100vh",
-          overflowY: "auto"
+          overflow: "hidden"
         }
       };
 

@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var styles = {
         container: {
           height: "100vh",
-          overflowY: "auto"
+          overflow: "hidden"
         }
       };
 
