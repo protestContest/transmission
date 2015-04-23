@@ -1,3 +1,5 @@
+var redis = require('redis');
+var rclient = redis.createClient();
 var jade = require('jade');
 
 module.exports = function(io) {
@@ -23,15 +25,14 @@ module.exports = function(io) {
 function respond(socket, data) {
   switch(data.requested) {
     case "name":
-      socket.send({
-        text: jade.render("text/greeting", data),
+        text: jade.renderFile(__dirname + '/text/greeting.jade'),
         request: "_"
       });
 
       setTimeout(function() {
         socket.send({
-          text: "<p>You have (1) new message.</p><p>New message:</p><blockquote> <p>2015-04-22 1806 UTC</p> <p>Hello. I don't know who you are, but thankfully you've gained access to the computer system. I'm a member of the faculty here, and I need your help. You may be in danger, so stay quiet about this. I'll explain more later. I have to go now. I'll contact you again soon. Until then, try to get familiar with the system, but DO NOT MODIFY ANYTHING.  (Try `help` if you're new to the SCN.)</p> <p>-Mongoose</p> </blockquote>",
-          request: "command"
+          text: jade.renderFile(__dirname + '/text/mongoose.jade'),
+          request: "_"
         });
       }, 4000);
     break;
