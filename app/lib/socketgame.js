@@ -29,47 +29,49 @@ function respond(socket, rclient, data) {
       goToLevel(socket, rclient, user.level, user);
     });    
   } else {
-    var user = loadUser(data.name);
+    loadUser(rclient, data.name, function(user) {
+      switch(data.requested) {
+        case "command":
+          switch (data.text) {
+            case "help":
+              socket.send({
+                text: jade.renderFile(__dirname + '/text/help.jade', {user: user}),
+                request: "command"
+              });
+            break;
 
-    switch(data.requested) {
-      case "command":
-        switch (data.text) {
-          case "help":
-            socket.send({
-              text: jade.renderFile(__dirname + '/text/help.jade'),
-              request: "command"
-            });
-          break;
+            case "info":
+              socket.send({
+                text: jade.renderFile(__dirname + '/text/info.jade'),
+                request: "command"
+              });
+            break;
 
-          case "info":
-            socket.send({
-              text: jade.renderFile(__dirname + '/text/info.jade'),
-              request: "command"
-            });
-          break;
+            case "logs":
+              socket.send({
+                text: "<p>Access denied.</p>",
+                request: "command"
+              });
+            break;
 
-          case "logs":
-            socket.send({
-              text: "<p>Access denied.</p>",
-              request: "command"
-            });
-          break;
+            case "messages":
+              var dates = (new Messages(new Date(user.start))).getDates();
 
-          case "messages":
-            socket.send({
-              text: jade.renderFile(__dirname + '/text/messages.jade'),
-              request: "command"
-            });
-          break;
-        }
-      break;
+              socket.send({
+                text: jade.renderFile(__dirname + '/text/messages.jade', {dates: dates}),
+                request: "command"
+              });
+            break;
+          }
+        break;
 
-      default:
-        socket.send({
-          text: "<p>Please wait.</p>",
-          request: "_"
-        });
-    }
+        default:
+          socket.send({
+            text: "<p>Please wait.</p>",
+            request: "_"
+          });
+      }
+    });
   }
 }
 
@@ -78,11 +80,15 @@ function checkNewPlayer(rclient, name, next) {
     if (!exists) {
       resetUser(rclient, name, next);
     } else {
-      rclient.hgetall(name, function(err, user) {
-        next(user);
-        rclient.hset(name, "lastLogin", (new Date()).toISOString());
-      });
+      loadUser(rclient, name, next);
+      rclient.hset(name, "lastLogin", (new Date()).toISOString());
     }
+  });
+}
+
+function loadUser(rclient, name, next) {
+  rclient.hgetall(name, function(err, user) {
+    next(user);
   });
 }
 
@@ -94,13 +100,13 @@ function levelUp(rclient, name, next) {
 
 function resetUser(rclient, name, next) {
   var now = new Date();
-  var dayMS = 24*60*60*1000;
+  var oneDayMs = 24*60*60*1000;
 
   var user = {
     name: name,
     level: '0',
     start: now.toISOString(),
-    lastLogin: (new Date(now - 30*dayMS)).toISOString()
+    lastLogin: (new Date(now - 30*oneDayMs)).toISOString()
   };
 
   rclient.hmset(name, user, function(err) {
@@ -109,28 +115,34 @@ function resetUser(rclient, name, next) {
 }
 
 function goToLevel(socket, rclient, level, user) {
+  var messages = new Messages(new Date(user.start));
+  var tvars = {
+    user: user,
+    dates: messages.getDates()
+  };
+
   switch(level) {
     case '0':
       socket.send({
-        text: jade.renderFile(__dirname + '/text/greeting.jade', user)
-            + jade.renderFile(__dirname + '/text/message1.jade', user),
+        text: jade.renderFile(__dirname + '/text/greeting.jade', tvars)
+            + jade.renderFile(__dirname + '/text/message1.jade', tvars),
         request: "_"
       });
 
       setTimeout(function() {
         socket.send({
-          text: jade.renderFile(__dirname + '/text/mongoose.jade', user),
+          text: jade.renderFile(__dirname + '/text/mongoose.jade', tvars),
           request: "command"
         });
 
         levelUp(rclient, user.name);
-      }, 4000);
+      }, messages.timeouts.mongoose1 * 1000);
     break;
 
     case '1':
       socket.send({
-        text: jade.renderFile(__dirname + '/text/greeting.jade', user)
-            + jade.renderFile(__dirname + '/text/messages.jade', user),
+        text: jade.renderFile(__dirname + '/text/greeting.jade', tvars)
+            + jade.renderFile(__dirname + '/text/messages.jade', tvars),
         request: "command"
       });
     break;
@@ -138,4 +150,25 @@ function goToLevel(socket, rclient, level, user) {
     default:
       resetUser(rclient, user.name);
   }
+}
+
+function Messages(startDate) {
+  var oneDayMs = 24*60*60*1000;
+
+  this.timeouts = {
+    mongoose1: 5
+  };
+
+  this.getDates = function() {
+    var quest1Date = new Date(startDate - oneDayMs);
+    quest1Date.setUTCHours(8, 0, 0, 0);
+
+    var mongoose1Date = new Date(startDate.valueOf());
+    mongoose1Date.setUTCSeconds(startDate.getUTCSeconds() + this.timeouts.mongoose1);
+
+    return {
+      quest1: quest1Date,
+      mongoose1: mongoose1Date
+    };
+  };
 }
