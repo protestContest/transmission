@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
     render: function() {
       var styles = {
         container: {
-          height: "100vh",
+          height: "90vh",
           overflow: "hidden"
         }
       };
