@@ -16,26 +16,23 @@ module.exports = function(io) {
     }, 7000);
 
     socket.on('message', function(data) {
-      respond(socket, data);
+      respond(socket, rclient, data);
     });
 
   });
 };
 
-function respond(socket, data) {
+function respond(socket, rclient, data) {
   switch(data.requested) {
     case "name":
-      socket.send({
-        text: jade.renderFile(__dirname + '/text/greeting.jade', data),
-        request: "_"
-      });
-
-      setTimeout(function() {
-        socket.send({
-          text: jade.renderFile(__dirname + '/text/mongoose.jade', data),
-          request: "command"
+      data.name = data.text;
+      checkNewPlayer(rclient, data.name, function(level) {
+        console.log({
+          name: data.name,
+          level: level
         });
-      }, 4000);
+        goToLevel(socket, rclient, level, data);
+      });
     break;
 
     case "command":
@@ -75,5 +72,61 @@ function respond(socket, data) {
         text: "<p>Please wait.</p>",
         request: "_"
       });
+  }
+}
+
+function checkNewPlayer(rclient, name, next) {
+  rclient.exists(name, function(err, exists) {
+    if (!exists) {
+      rclient.hset(name, "level", 0, function(err) {
+        next(0);
+      });
+    } else {
+      rclient.hget(name, "level", function(err, level) {
+        next(level);
+      });
+    }
+  });
+}
+
+function levelUp(rclient, name, next) {
+  rclient.hincrby(name, "level", 1, function(err) {
+    if (next) { next(); }
+  });
+}
+
+function resetLevel(rclient, name, next) {
+  rclient.hset(name, "level", 0, function(err) {
+    if (next) { next(); }
+  });
+}
+
+function goToLevel(socket, rclient, level, data) {
+  switch(level) {
+    case '0':
+      socket.send({
+        text: jade.renderFile(__dirname + '/text/greeting.jade', data),
+        request: "_"
+      });
+
+      setTimeout(function() {
+        socket.send({
+          text: jade.renderFile(__dirname + '/text/mongoose.jade', data),
+          request: "command"
+        });
+
+        levelUp(rclient, data.name);
+      }, 4000);
+    break;
+
+    case '1':
+      socket.send({
+        text: jade.renderFile(__dirname + '/text/info.jade', data),
+        request: "command"
+      });
+    break;
+
+    default:
+      resetLevel(rclient, data.name);
   }
 }

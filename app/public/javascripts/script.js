@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var InputBox = React.createClass({displayName: "InputBox",
     getInitialState: function() {
-      return {text: "", disabled: true, request: "_"};
+      return {text: "", disabled: true, request: "_", name: ""};
     },
     componentDidMount: function() {
       this.refs.input.getDOMNode().focus();
@@ -39,9 +39,14 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
       }
 
+      if (this.state.request === "name") {
+        this.setState({name: this.state.text});
+      }
+
       socket.send({
         text: this.state.text,
-        requested: this.state.request
+        requested: this.state.request,
+        name: this.state.name
       });
       this.setState({text: ""});
     },
