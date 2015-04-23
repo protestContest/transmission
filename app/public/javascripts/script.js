@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   socket.on('disconnect', function() {
-    terminal.addMessage({text: "<p>Connection terminated.</p>"});
+    terminal.addMessage({text: "<p>Connection terminated.</p>", request: "_"});
   });
 
 });
