@@ -5,10 +5,10 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('app:server');
+var debug = require('debug')('transmission:server');
 var http = require('http');
 var socketio = require('socket.io');
-var SocketGame =  require('../lib/socketgame');
+var SocketController = require('../socket-controller');
 
 /**
  * Get port from environment and store in Express.
@@ -23,11 +23,8 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-/**
- * Setup RTC module
- */
 var io = socketio(server);
-var socketgame = SocketGame(io);
+var controller = SocketController(io);
 
 /**
  * Listen on provided port, on all network interfaces.
